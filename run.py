@@ -1,5 +1,6 @@
 import requests
 import csv
+from threading import Thread
 
 # Заголовки запросов, чтобы не получить бан от detmir.ru
 headers = {
@@ -67,12 +68,13 @@ def collect_data(page_name: str, city: str):  # Функция по сборы �
 
 
 def main():
-    collect_data('detskoe_oruzhie', 'MOW')
-    collect_data('detskoe_oruzhie', 'SPE')
-    collect_data('mashiny', 'MOW')
-    collect_data('mashiny', 'SPE')
-    collect_data('sets_cartoon_characters', 'MOW')
-    collect_data('sets_cartoon_characters', 'SPE')
+    list_page = [('detskoe_oruzhie', 'MOW'), ('detskoe_oruzhie', 'SPE'), ('mashiny', 'MOW'),
+                 ('mashiny', 'SPE'), ('sets_cartoon_characters', 'MOW'), ('sets_cartoon_characters', 'SPE')]
+    threads = [Thread(target=collect_data, args=(page, city)) for page, city in list_page]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
 
 
 if __name__ == '__main__':
